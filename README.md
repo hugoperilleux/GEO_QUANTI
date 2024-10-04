@@ -2,6 +2,8 @@
 
 Ce dossier constitue le matériel des travaux pratiques pour le cours GEOG-F-404 Méthode quantitative en géographie 2023-2024 destiné aux étudiants en master de géographie à l'Université Libre de Bruxelles (ULB).
 
+Pour chaque TP, il y a fichier de présentation avec des exemples ainsi qu'un fichier d'exercice avec les résultats finaux attendus.
+
 ## Plan
 
 #### Introduction au logiciel
