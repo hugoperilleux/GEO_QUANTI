@@ -4,11 +4,11 @@ Ce dossier constitue le matériel des travaux pratiques pour le cours GEOG-F-404
 
 ## Plan
 
-◦ Introduction au logiciel
+#### Introduction au logiciel
 
 ▪ TP1 : Interface RStudio, scripts, type d’objets, lecture de donnée (rbase)
 
-◦ Gestion de données
+#### Gestion de données
 
 ▪ TP2  : Manipulation de données 1 (rbase, rstudio)
 
@@ -24,7 +24,7 @@ Ce dossier constitue le matériel des travaux pratiques pour le cours GEOG-F-404
 
 ▪ TP7 : Géocodage (phacochr) et création de carte en boucle (for)
 
-◦ Méthode quantitative appliquée à la géographie
+#### Méthode quantitative appliquée à la géographie
 
 ▪ TP8 : Régression
 
@@ -32,7 +32,7 @@ Ce dossier constitue le matériel des travaux pratiques pour le cours GEOG-F-404
 
 ▪ TP10 : Classification
 
-◦ Autre
+#### Autre
 
 ▪ TP11 : Utilisation des intelligences artificielles (chatgpt)
 
