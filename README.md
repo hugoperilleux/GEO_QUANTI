@@ -26,13 +26,13 @@ Pour chaque TP, il y a fichier de présentation avec des exemples ainsi qu'un fi
 
 ▪ TP7 : Géocodage (phacochr) et création de carte en boucle (for)
 
-#### Méthode quantitative appliquée à la géographie
+#### Méthodes quantitatives appliquées à la géographie
 
 ▪ TP8 : Régression
 
 ▪ TP9 : Analyse en Composantes Principales (ACP)
 
-▪ TP10 : Classification
+▪ TP10 : Classifications ascendentes hiérarchique
 
 #### Autre
 
