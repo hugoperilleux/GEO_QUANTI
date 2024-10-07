@@ -76,8 +76,22 @@ data<-data %>%
 
 
 ## 1.2. Communes ----
+communes<- st_read("data/France/communes-20220101-shp/communes-20220101.shp") %>%
+  filter(insee!="75056") %>%
+  select(-surf_ha)
 
-communes <- st_read("data/France/communes_arrond_ile_de_france.gpkg")
+arrond_lyon_mars_paris<- st_read("data/France/arrondissements_municipaux-20180711-shp/arrondissements_municipaux-20180711.shp")%>%
+  select(-surf_km2) # On importe les arrondissements de Paris, Lyon et Marseille
+
+communes<-bind_rows(communes,arrond_lyon_mars_paris) # On joint communes et arrondissements
+rm(arrond_lyon_mars_paris)
+
+
+# On ne garde que les communes de l'Ile de France
+communes<-communes %>%
+  left_join(communes_table, by=c("insee"="COM"))%>%
+  filter(REG==11) %>%
+  select(-c(5:15))
 
 # On calcul la densité par communes
 
@@ -88,6 +102,7 @@ communes<-communes %>%
 # On créé un objet département pour la cartographie
 departements_Paris<-communes %>%
   left_join(communes_table, by=c("insee"="COM")) %>%
+  filter(REG==11) %>%
   group_by(DEP,REG) %>%
   summarise(geometry=st_union(geometry))
 

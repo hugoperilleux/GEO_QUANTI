@@ -116,7 +116,8 @@ ggplot(data=cadastre,
 
 ### 3.3.3. Une carte des groupes ----
 # On importe les secteurs statistiques et garde que les secteurs bruxellois
-secteurs_stats<- st_read ("data/sh_statbel_statistical_sectors_31370_20230101.gpkg") %>%
+secteurs_stats<- st_read ("data/sh_statbel_statistical_sectors_31370_20230101.sqlite") %>%
+  st_zm()%>%
   filter(tx_rgn_descr_fr=="Région de Bruxelles-Capitale")
 
 # On construit un objet spatial communes pour la cartographie

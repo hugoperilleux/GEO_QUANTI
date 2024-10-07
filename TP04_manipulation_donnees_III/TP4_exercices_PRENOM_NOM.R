@@ -29,6 +29,7 @@ f <- c("Jan", "Jan", "Fev", "Juil")
 # **Exercice 3 ** ----
 
 # Les exercices suivant seront réalisé à partir des données hdv2003:
+library(questionr)
 data(hdv2003)
 
 # À l’aide de l’interface graphique de questionr, recoder la variable nivetud pour obtenir le tri à plat suivant (il se peut que l’ordre des modalités dans le tri à plat soit différent) :
@@ -41,6 +42,12 @@ data(hdv2003)
 #> Enseignement technique ou professionnel 594 29.7 31.5
 #> Enseignement superieur                  441 22.0 23.4
 #> NA                                      112  5.6   NA
+
+
+# "A arrete ses etudes, avant la derniere annee d'etudes primaires" et "Derniere annee d'etudes primaires" en "Études primaires"
+#  "Enseignement technique ou professionnel court" et "Enseignement technique ou professionnel long" en "Enseignement technique ou professionnel"
+
+freq(hdv2003$nivetud)
 
 
 

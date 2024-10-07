@@ -2,12 +2,15 @@
 # ----------------  TP 7 - Géocodage et boucles  -----------------
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# fonctions vues: phaco_setup_data, phaco_geocode,phaco_best_data_update
+# fonctions vues: phaco_setup_data, phaco_geocode,phaco_best_data_update, for
 
 # package: phacochr
 
 # source: https://phacochr.github.io/phacochr
 
+# nouvelles données: 
+# - data_acp_tpmq.csv
+# - nationalites_bxl_2007_2.csv
 
 # raccourcis:
 # %>%  CTRL + SHIFT + m
@@ -29,7 +32,7 @@
 # Vous pouvez installer le package phacochr depuis GitHub. Pour cela, il vous faut d’abord installer et charger le package devtools :
 
 # Installer devtools si celui-ci n'est pas installé et charger le package
-install.packages("devtools")
+# install.packages("devtools")
 library(devtools)
 
 # Installer phacochr
@@ -58,6 +61,8 @@ phaco_setup_data()
 #  Voici un exemple de géocodage à partir des données d’exemples snacks contenues dans phacochr :
 head(snacks, 8)
 
+snacks<-snacks
+
 # Il s’agit des snacks à Bruxelles. Le géocodage se lance simplement avec la fonction phaco_geocode() appliquée au data.frame. Nous indiquons dans cet exemple 3 paramètres : les colonnes contenant la rue, le numéro de rue et le code postal, disponibles séparément dans la base de données. Il s’agit de la situation idéale, mais le programme est compatible avec d’autres configurations : celles-ci sont renseignée plus bas au point Format des données à géocoder. Mentionnons déjà que le numéro peut ne pas être renseigné ; phacochr trouve alors les coordonnées du numéro médian de la rue au code postal indiqué. La fonction dispose de plusieurs options, voir le dictionnaire des fonctions : https://phacochr.github.io/phacochr/reference/index.html.
 
 result <- phaco_geocode(data_to_geocode = snacks,
@@ -72,11 +77,12 @@ phaco_map_s(result$data_geocoded_sf,
             title_carto = "Snacks à Bruxelles")
 
 
-
+library(phacochr)
+?phaco_geocode
 
 # 2. Boucle for ----
 
-# 2.1. Syntaxe ----
+## 2.1. Syntaxe ----
 
 # Les boucles for permettent de de réaliser des opérations de façon itérative avec la synthaxe suivante:
 for (i in 1:n){
@@ -103,10 +109,11 @@ for (i in c("vive", "les", "boucles" )){
   print(i)
 }
 
-# 2.2. Concaténer un résultat ----
+## 2.2. Concaténer un résultat ----
 
 # On peut vouloir stocker le résultat des opérations réalisées dans la boucle. Pour pouvoir faire cela, il s'agit d'initialiser la boucle en créer un objet vide
 
+library(tidyverse)
 
 result<- tibble()
 for (i in 1:10){
@@ -116,15 +123,28 @@ for (i in 1:10){
 result
 
 
-# 2.3. Faire des cartes en séries ----
+# Cette opération peut être réaliser de façon vectorisée et donc beaucoup efficace de cette façon:
+
+tmp<-tibble(x=1:10) %>% 
+  mutate(x=10+x)
+
+# Dans de nombreux cas, il n'est pas recommandé de faire des boucles voir: https://thinkr.fr/comment-faire-des-boucles-en-r-ou-pas/
+
+
+## 2.3. Faire des cartes en séries ----
 
 
 # On peut réaliser toute une série d'opération dans les boucles comme créer des cartes
 
 # On charge des données de nationalités
+
+library(sf)
+library(mapsf)
 nationalites<-read_delim("data/nationalites_bxl_2007_2.csv", delim=";")
 
-secteurs_stats<- st_read ("data/sh_statbel_statistical_sectors_31370_20230101.gpkg")
+secteurs_stats<- st_read ("data/sh_statbel_statistical_sectors_31370_20230101.sqlite") %>%
+  st_zm()
+
 nationalites_sec<-secteurs_stats%>%
   left_join(nationalites, by=c("cd_sector"="sscod")) %>%
   filter(tx_rgn_descr_fr=="Région de Bruxelles-Capitale")

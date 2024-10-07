@@ -13,13 +13,14 @@
 # 1. Bien poser ses questions ----
 # Pour espérer une réponse qui corresponde à ce que vous souhaitez, il faut arriver à bien poser votre question. Il s'agit souvent d'un exercice pas facile où on se met entrer dans un long dialogue. Voici donc quelques astuces:
 #  - Vous pouvez aller à la ligne avec MAJ+ENTER ou écrire votre question dans un traitement de texte et ainsi ne pas hésiter à être un peu long et explicite.
-#  - Présentez votre set de données par exemple str() ou en affichant les objets sur lesquels vous travaillez
-#  - Si vous faites face à un problème  de "syntaxe", c'est-à-dire que vous vous demandez comment définir les arguments d'une fonction, et que vous pensez que ça fonctionnerait avec une fonction, vous pouvez orienter les réponses en suggérant l'utilisation de tel ou tel package/fonction.
+#  - Présentez  votre set de données par exemple str() ou en affichant les objets sur lesquels vous travaillez
+#  - Si vous faites face à un problème de "syntaxe", c'est-à-dire que vous vous demandez comment définir les arguments d'une fonction, et que vous pensez que ça fonctionnerait avec une fonction, vous pouvez orienter les réponses en suggérant l'utilisation de tel ou tel package/fonction.
 
 
 # 2. Eviter les chemins alambiqués ----
-#  ChatGPT peut facilement vous emmener vers des chemins que vous ne comprendrez pas. Vous avez alors le choix d'accepter un bout de code que vous ne comprenez pas. A la longue, cela peut être problématique car d'une part il peut se tromper et d'autre part si vous souhaitez ajuster et répéter l'opération vous serez coincés.
+#  ChatGPT peut facilement vous emmener vers des chemins que vous ne comprendrez pas. Vous avez alors le choix d'accpter un bout de code que vous ne comprenez pas. A la longue, celà peut être problèmatique car d'une part il peut se tromper et d'autre part si vous souhaitez ajuster et répeter l'opération vous serez coincés.
 # Il faut savoir que si on pose la même question plusieurs fois, on n'obtient pas le même résultat. Il peut donc être vraiment intéressant d'orienter sa réponse vers quelque chose qu'on connait.
+
 
 
 # 3. Adopter une posture compréhensive ----

@@ -10,9 +10,10 @@
 # source: https://riatelab.github.io/mapsf/
 # source: https://maeltheuliere.github.io/rspatial/index.html
 
-
 # Données:
-# secteurs statistiques: https://statbel.fgov.be/fr/open-data/secteurs-statistiques-2023
+# secteurs statistiques (sh_statbel_statistical_sectors_31370_20230101.sqlite): https://statbel.fgov.be/fr/open-data/secteurs-statistiques-2023
+# quartier du monitoring (ibsa-revenu-imposable-median-des-declarations_2019_quartier.geojson): https://monitoringdesquartiers.brussels/cartes
+# revenus par secteurs statistiques (fisc2019_D_FR.xls): https://statbel.fgov.be/fr/themes/menages/revenus-fiscaux/plus
 
 
 # raccourcis:
@@ -26,7 +27,7 @@
 #install.packages("sf")
 #install.packages("mapsf")
 
-setwd("/mnt/data/ownCloud/ULB/GEO/GEOG F 404/")
+#setwd("/mnt/data/ownCloud/ULB/GEO/GEOG F 404/")
 
 
 # 1. Analyse vectorielle   -----
@@ -44,29 +45,28 @@ library (tidyverse)
 ## 1.1. Importer et exporter des données  -----
 
 
-### 1.1.1. Importer un fichier vectoriel
+### 1.1.1. Importer un fichier vectoriel  -----
 
 # st_read() permet de lire des données spatiales disponibles en fichier plat. Le format de fichier plat le plus populaire en géomatique est ESRI Shapefile (.shp). Ce format, en plus de ne pas être un format ouvert, a des limites bien documentées. Avec l’avènement du web, le format GeoJSON se développe beaucoup, bien qu’il soit aussi limité. Le format considéré comme le plus prometeur est le format OGC GeoPackage (.gpkg) promu par l’Open Geospatial Consortium. Mais la liste des formats lisibles par sf est bien plus vaste. Pour l’obtenir, on peut utiliser st_drivers()
 
 # Dans certains cas, une dimension z peut être ajoutée. Elle peut être supprimée grâce à la fonction zm()
 
-# https://statbel.fgov.be/fr/open-data/secteurs-statistiques-2023
+secteurs_stats<- st_read ("data/sh_statbel_statistical_sectors_31370_20230101.sqlite") %>%
+  st_zm()
 
-# secteurs_stats<- st_read ("data/sh_statbel_statistical_sectors_31370_20230101.sqlite") %>%
-#  st_zm()
-
-### 1.1.2. Exporter un fichier vectoriel  -----
-
-# st_write() permet d'exporter des données. Il faut bien indiquer l'extention qu'on souhaite utiliser (ici .gpkg). Le paramètre append=FALSE permet d'écraser un fichier existant.
-
-#st_write(secteurs_stats, "data/sh_statbel_statistical_sectors_31370_20230101.gpkg", append=F)
-secteurs_stats<-st_read( "data/sh_statbel_statistical_sectors_31370_20230101.gpkg")
-
-# Vous noterez que le champ géométrie qui s'appelle généralement geom, geometry ou the_geom, avait le nom GEOMETRY dans lorsqu'on a importer le fichier .sqlite et qu'il s'appelle geom dans le fichier .gpkg.
 
 # On peut faire une première carte avec la fonction native plot. En appliquant la fonction st_geometry on extrait juste la géométrie nécessaire pour la carte:
 
 plot(st_geometry(secteurs_stats))
+
+# st_write() permet d'exporter des données. Il faut bien indiquer l'extention qu'on souhaite utiliser (ici .gpkg). Le paramètre append=FALSE permet d'écraser un fichier existant.
+
+### 1.1.2. Exporter un fichier vectoriel  -----
+
+st_write(secteurs_stats, "data/secteurs_stats2023.gpkg", append=F)
+secteurs_stats<-st_read( "data/secteurs_stats2023.gpkg")
+
+# Vous noterez que le champ géométrie qui s'appelle généralement geom, geometry ou the_geom, avait le nom GEOMETRY dans lorsqu'on a importer le fichier .sqlite et qu'il s'appelle geom dans le fichier .gpkg.
 
 
 ### 1.1.3. Créer un fichier spatial à partir de coordoonées  -----
@@ -93,11 +93,17 @@ plot(rectangle)
 secteurs_stats %>%
   st_transform(crs=4326)
 
+## 1.2. Opérations sur les attributs  -----
 
 # Les objets  spatiaux fonctionnent un peu comme des objets dataframe (ou tibble), on peut réaliser les opérations de dplyr. Par exemple, on peut réaliser un filtre de la façon suivante:
 
+table(secteurs_stats$tx_rgn_descr_fr)
+
 secteurs_stats_bxl <- secteurs_stats %>%
   filter(tx_rgn_descr_fr== "Région de Bruxelles-Capitale")
+
+table(secteurs_stats_bxl$tx_rgn_descr_fr)
+
 plot(st_geometry(secteurs_stats_bxl))
 
 # Comme pour les dataframe et les tibbles on peut facile contruire des nouvelles variables grâce au verbe mutate. On peut calculer la surface de chaque polygone grâce à la fonction st_area qui s'applique sur le champ géomtrie (geom)
@@ -130,7 +136,7 @@ plot(st_geometry(region))
 
 # Provinces:
 provinces <- secteurs_stats %>%
-  group_by(cd_prov_refnis, tx_prov_descr_fr) %>% # ici on mets le code province, le nom des pvinces en français pour conserver les deux champs
+  group_by(cd_prov_refnis, tx_prov_descr_fr) %>% # ici on mets le code province, le nom des provinces en français pour conserver les deux champs
   summarise(geom= st_union(geom))%>%
   ungroup()
 
@@ -218,9 +224,9 @@ plot(st_geometry(decoupage))
 
 ## 1.4. Opération à partir des géométries  -----
 
-### 1.4.1. Sélection par localisation  -----
+### 1.4.1. Séléction par localisation  -----
 
-# Les sélection par localisation peuvent être réalisée grâce à la fonction st_filter et la paramètre .predicate (ne pas oublier le point) permet de définir l'opérateur topologique :
+# Les séléction par localisation peuvent être réalisée grâce à la fonction st_filter et la paramètre .predicate (ne pas oublier le point) permet de définir l'opérateur topologique :
 # st_within,
 # st_touches,
 # st_intersects,
@@ -241,7 +247,6 @@ selection_localisation<-st_filter(communes, rectangle,.predicate =st_intersects)
 
 plot(st_geometry(rectangle),border="red")
 plot(st_geometry(selection_localisation), add=T)
-
 
 # Ici on sélectionne parmi l'objet secteurs_stats_bxl_centroid les points qui sont à l'intérieur (within) de la commune d'Anderlecht
 secteurs_stats_anderlecht_centroid<-secteurs_stats_bxl_centroid %>%
@@ -276,6 +281,12 @@ plot(st_geometry(anderlecht),add=T)
 jointure<-communes_bxl %>%
   st_join(communes_bxl_centroid, join= st_intersects)
 
+
+# On peut observer que avec la fonction st_centroid, la jointure est problèmatique pour la Ville de Bruxelles, le centroide de la commune intersecte la commune de Schaerbeek, et aucun centroide n'intersecte la commune de la Ville de Bruxelles.
+
+jointure<-communes_bxl %>%
+  st_join(st_centroid(communes_bxl), join= st_intersects)
+
 View(jointure)
 
 plot(st_geometry(communes_bxl))
@@ -287,8 +298,10 @@ plot(st_geometry(communes_bxl_centroid),cex=0.2,add=T)
 # Prenons une couche des quartiers (monitoring) publié par l'IBSA:
 quartiers<-st_read("data/ibsa-revenu-imposable-median-des-declarations_2019_quartier.geojson")
 
+plot(st_geometry(quartiers))
+
 quartiers %>%
-  st_join(secteurs_stats_bxl_centroid, join= st_intersects) %>%
+  st_join(st_centroid(secteurs_stats_bxl), join= st_intersects) %>%
   as.data.frame() %>%
   select(id, cd_sector)
 
@@ -353,6 +366,8 @@ mf_map(region)
 # Une carte des provinces
 mf_map(provinces)
 
+### 2.2.2. Carte par plage (choroplèthe)  -----
+
 # Pour réaliser la carte suivante on va charger les données de population par secteurs statistiques
 
 library(readxl)
@@ -365,9 +380,6 @@ secteurs_stats_pop<-secteurs_stats %>%
   left_join(pop, by=c("cd_sector"="CD_SECTOR")) %>%
   mutate(densite=as.numeric(10000*POPULATION/st_area(geom))) %>%
   filter(tx_rgn_descr_fr== "Région de Bruxelles-Capitale")
-
-
-### 2.2.2. Carte par plage (choroplèthe)  -----
 
 # On peut alors faire une carte par plafe avec mf_map où type ="choro" pour choroplèthe
 
@@ -383,7 +395,7 @@ mf_map(secteurs_stats_pop,
 mf_map(secteurs_stats_pop,
        var= "densite",
        type="choro")
-mf_map(x = communes, #%>%filter(tx_rgn_descr_fr== "Région de Bruxelles-Capitale"),#avec un filtre
+mf_map(x = communes %>%filter(tx_rgn_descr_fr== "Région de Bruxelles-Capitale"),#avec un filtre
          col = NA,
        border = "gray10",
        lwd = 1.5,
@@ -397,13 +409,13 @@ mf_map(x = communes, #%>%filter(tx_rgn_descr_fr== "Région de Bruxelles-Capitale
 mf_map(secteurs_stats_pop,
        var= "densite",
        type="choro",
-       nbreaks=5, # le nombre de classe
+       nbreaks=5, # le nombre de classes
        pal= "Viridis", # le choix de la palette de couleur
        leg_pos="topleft", # la position de la légende
        leg_title= "Densité de population\n(hab./ha)") # le titre de la légende
 mf_map(x = comunes_bxl, col = NA, border = "gray10", lwd = 1.5, add = TRUE)
 
-### 2.2.5. Carte de cercle proportionnels  -----
+### 2.2.5. Carte de cercles proportionnels  -----
 
 
 # On peut réaliser des cartes de cercles proportionnels avec var="prop"
@@ -413,7 +425,7 @@ mf_map(x = secteurs_stats_pop,
        var = "POPULATION",
        type = "prop",
        leg_pos = "topright",
-       inches=0.03,
+       inches=0.05,
        add=T)
 
 
@@ -429,16 +441,18 @@ mf_map(x = secteurs_stats_pop,
 revenus<-read_excel("data/fisc2019_D_FR.xls")
 
 
-# On réalise la jointure
+# On réalise la jointure sur base du champ cd_sector
+
 secteurs_stats_pop_revenu<- secteurs_stats_pop %>%
   left_join(revenus, by=c("cd_sector"))
 
+# On réalise la carte bivariée avec type = "prop_choro"
 
 mf_map(x = secteurs_stats_pop,col = "white", border = "grey")
 mf_map(x = secteurs_stats_pop_revenu,
        var = c("POPULATION","revenu_median_decla"),
        type = "prop_choro",
-       inches=0.08,
+       inches=0.10,
        nbreaks=5,
        leg_pos=c("bottomleft","topleft"),
        pal = "Viridis",
@@ -460,7 +474,7 @@ mf_map(x = secteurs_stats_pop_revenu,
 # Par exemple:
 
 mf_export(x = secteurs_stats_pop,
-          filename ="TP6_cartographie/carte_exemple.png",
+          filename ="TP06/carte_exemple.png",
           width = 800)
 mf_map(x = secteurs_stats_pop,col = "white", border = "grey65")
 mf_map(x = secteurs_stats_pop_revenu,
@@ -469,7 +483,7 @@ mf_map(x = secteurs_stats_pop_revenu,
        inches=0.13,
        nbreaks=5,
        leg_pos=c("topleft","topright"),
-       leg_title= c("Nombre d'habitant-es","Revenu médian par\ndéclaration (2019"),# \n permet d'aller à la ligne
+       leg_title= c("Nombre d'habitant-es","Revenu médian par\ndéclaration (2019)"),# \n permet d'aller à la ligne
        leg_val_rnd = c(-1,-2), #permet d'arrondir à la dizaine et la centaine
        pal = "Viridis",
        add = TRUE)
@@ -479,11 +493,31 @@ mf_layout(title = "Revenu médian par déclaration",
           frame=T)
 dev.off()
 
+### 2.2.8. Modifier les classes  -----
+
+# Par défaut l'écart entre les classes est fixes. La fonction mf_get_breaks permet de modifier les breaks. On peut utiliser les méthodes de quantiles ou jolies ruptures (jenks). 
+
+# https://riatelab.github.io/mapsf/reference/mf_get_breaks.html
 
 
+mf_get_breaks(secteurs_stats_pop_revenu$revenu_median_decla, breaks="quantile", nbreaks=5)
 
+# Plutôt que nbreaks =  on définit alors les breaks de façon manuelle avec breaks =
 
-
-
+mf_map(x = secteurs_stats_pop,col = "white", border = "grey65")
+mf_map(x = secteurs_stats_pop_revenu,
+       var = c("POPULATION","revenu_median_decla"),
+       type = "prop_choro",
+       inches=0.13,
+       breaks=mf_get_breaks(secteurs_stats_pop_revenu$revenu_median_decla, breaks="quantile", nbreaks=5),
+       leg_pos=c("topleft","topright"),
+       leg_title= c("Nombre d'habitant-es","Revenu médian par\ndéclaration (2019)"),# \n permet d'aller à la ligne
+       leg_val_rnd = c(-1,-2), #permet d'arrondir à la dizaine et la centaine
+       pal = "Viridis",
+       add = TRUE)
+mf_layout(title = "Revenu médian par déclaration",
+          credits = "Hugo Périlleux - IGEAT - ULB\nSources: IBSA, 2019",
+          arrow=F,
+          frame=T)
 
 

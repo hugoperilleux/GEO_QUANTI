@@ -21,7 +21,7 @@
 
 
 # **Exercice 2 ** -----
-# Réaliser une carte des communes dans le Hainaut
+# Réaliser une carte des communes de Wallonie
 
 
 # **Exercice 3 ** -----

@@ -28,7 +28,7 @@
 # DEC_SOC08	part décile 8 socioéconomique
 # DEC_SOC09	part décile 9 socioéconomique
 # DEC_SOC10	part décile 10 socioéconomique
-# NBCAR_MEN
+# NBCAR_MEN nombre de voiture par ménage
 # P_J	Part logements avec jardin
 # P_JP50	Part logements avec jardin de plus de 50m²
 # PSOC123	Part déciles soco 123
@@ -60,7 +60,7 @@
 # AFR_N	Part nationalités = Afrique du N
 # AFR_SUBS	Part nationalités = Afrique subsaharienne
 # P_AMLAT	Part nationalités = Amérique latine
-# P_EU14	Part nationalités = Amérique latine
+# P_EU14	Part nationalités = Europe 14
 # P_FR	Part nationalité = France
 # P_NUE	Part nationalités = UE membres >= 2004
 # P_OCDE	Part nationalités = autre OCDE
